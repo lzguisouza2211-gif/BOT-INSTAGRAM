@@ -7,8 +7,8 @@ visual do carrossel sem tocar em código.
 """
 
 MARCA_VISUAL = {
-    "nome": "NorthCode",
-    "arroba": "@northcode",
+    "nome": "Teste-Marca-777",
+    "arroba": "@777",
 
     # Fundo escuro levemente azulado (não preto puro — foge do clichê).
     "cor_fundo": "#0B111A",

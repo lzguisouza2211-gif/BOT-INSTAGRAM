@@ -1,6 +1,6 @@
 # Gerador de Posts
 
-Gera posts de Instagram **originais** a partir de uma referência: você dá o texto
+Gera posts de Instagram **originais** a partir de uma referência: você dá o texto ou imagem
 de um post que curtiu + o tema que quer abordar, e a ferramenta extrai a *fórmula*
 da referência (formato, gancho, estrutura) e escreve um post novo na voz da sua
 marca — já renderizado como carrossel em imagem.
@@ -22,6 +22,9 @@ pasta com post.json + legenda.txt + slides PNG
 ```
 
 O motor de IA é **trocável**: roda no Gemini (grátis) ou no Claude, escolhido no `.env`.
+
+> Opcional: em vez de escrever a voz da marca na mão no `config.py`, dá pra
+> gerá-la a partir de prints do perfil — veja "Aprender a marca" abaixo.
 
 ## Instalação
 
@@ -83,6 +86,20 @@ python render.py post.json                     # só renderiza slides de um JSON
 python render.py exemplo_slides.json           # renderiza o exemplo (útil pra ajustar o visual)
 ```
 
+## Aprender a marca (opcional)
+
+Gera a voz da marca (`config.py`) a partir de prints do perfil, em vez de
+escrever na mão. Roda uma vez, ou quando a marca mudar.
+
+```bash
+mkdir prints_perfil          # coloque prints do perfil aqui (bio, grade, legendas)
+python aprender_marca.py
+```
+
+A IA extrai a voz, mostra na tela e pergunta se grava. Ao gravar, a marca nova
+entra ativa e a anterior fica comentada no `config.py` (nada é apagado). Só a
+voz é extraída; as cores (`marca_visual.py`) você ajusta na mão.
+
 ## Configuração
 
 | Arquivo            | O que ajusta                                              |
@@ -101,6 +118,7 @@ Quando tiver a chave da Anthropic, no `.env`: mude `PROVEDOR=claude` e preencha
 
 ```
 criar.py           fluxo completo (gerar + renderizar)
+aprender_marca.py  extrai a voz da marca de prints do perfil (opcional)
 cli.py             gerador de texto (analisar / gerar)
 render.py          motor visual (slides → PNG)
 gerador.py         lógica do cérebro + motor de IA trocável

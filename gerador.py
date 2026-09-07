@@ -14,9 +14,11 @@ pro provedor escolhido no .env (PROVEDOR=gemini | claude). Trocar de motor é
 mudar uma linha no .env — o resto do pipeline nem percebe.
 """
 
+import base64
 import json
 import os
 import re
+import time
 
 from dotenv import load_dotenv
 
@@ -68,6 +70,27 @@ POST DE REFERÊNCIA:
 \"\"\""""
 
     return _parse_json(_chamar_modelo(prompt, max_tokens=1024))
+
+
+def analisar_referencia_imagens(caminhos_imagens: list) -> dict:
+    """
+    Igual a analisar_referencia, mas lê PRINTS de posts (imagens) em vez de texto.
+    Extrai o esqueleto — inclusive lendo a legenda embutida na arte da imagem.
+    """
+    prompt = """Você está vendo prints de posts de Instagram usados como referência.
+Extraia o ESQUELETO deles — a estrutura e a fórmula que fazem funcionar — SEM
+copiar o conteúdo específico. Leia também o texto que estiver DENTRO das imagens
+(legendas embutidas na arte).
+
+Devolva SOMENTE um JSON válido, sem cercas de markdown, com estas chaves:
+- "formato": tipo de post (carrossel, post único, reels, etc.)
+- "gancho": que tipo de gancho abre o post (pergunta, número, promessa, polêmica...)
+- "estrutura": lista dos passos de como o conteúdo se organiza
+- "tom": registro de voz (informal, técnico, motivacional...)
+- "tema": o assunto/nicho geral (não o conteúdo exato)
+- "cta": qual a chamada pra ação, se houver"""
+
+    return _parse_json(_chamar_modelo_com_imagens(prompt, caminhos_imagens, max_tokens=1024))
 
 
 def gerar_post(esqueleto: dict, marca: dict, tema_do_post: str) -> dict:
@@ -136,16 +159,43 @@ def _chamar_modelo(prompt: str, max_tokens: int) -> str:
     )
 
 
+def _com_retry(funcao, tentativas: int = 4):
+    """
+    Executa `funcao` e, se o servidor estiver sobrecarregado (503) ou pedir
+    pra desacelerar (429), espera e tenta de novo — 2s, 4s, 8s...
+
+    Só faz retry em erro temporário de servidor. Erro de nome de modelo (404),
+    chave inválida (401/403) e afins estouram na hora, sem insistir à toa.
+    """
+    for tentativa in range(1, tentativas + 1):
+        try:
+            return funcao()
+        except Exception as erro:
+            texto = str(erro).lower()
+            temporario = any(s in texto for s in ("503", "unavailable", "overloaded",
+                                                  "429", "high demand", "rate limit"))
+            if not temporario or tentativa == tentativas:
+                raise
+            espera = 2 ** tentativa  # 2, 4, 8 segundos
+            print(f"   servidor ocupado, tentando de novo em {espera}s "
+                  f"(tentativa {tentativa}/{tentativas - 1})...")
+            time.sleep(espera)
+
+
 def _chamar_gemini(prompt: str) -> str:
     global _client_gemini
     if _client_gemini is None:
         from google import genai  # lê GEMINI_API_KEY do ambiente automaticamente
         _client_gemini = genai.Client()
-    resposta = _client_gemini.models.generate_content(
-        model=MODELO_GEMINI,
-        contents=prompt,
-    )
-    return (resposta.text or "").strip()
+
+    def _chamada():
+        resposta = _client_gemini.models.generate_content(
+            model=MODELO_GEMINI,
+            contents=prompt,
+        )
+        return (resposta.text or "").strip()
+
+    return _com_retry(_chamada)
 
 
 def _chamar_claude(prompt: str, max_tokens: int) -> str:
@@ -153,12 +203,91 @@ def _chamar_claude(prompt: str, max_tokens: int) -> str:
     if _client_claude is None:
         from anthropic import Anthropic  # lê ANTHROPIC_API_KEY do ambiente
         _client_claude = Anthropic()
-    resposta = _client_claude.messages.create(
-        model=MODELO_CLAUDE,
-        max_tokens=max_tokens,
-        messages=[{"role": "user", "content": prompt}],
+
+    def _chamada():
+        resposta = _client_claude.messages.create(
+            model=MODELO_CLAUDE,
+            max_tokens=max_tokens,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return "".join(b.text for b in resposta.content if b.type == "text").strip()
+
+    return _com_retry(_chamada)
+
+
+# ------------------------------------------------------------------
+#  CHAMADA COM IMAGENS (multimodal — pra ler prints)
+# ------------------------------------------------------------------
+
+_MIMES = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp"}
+
+
+def _ler_imagens(caminhos: list) -> list:
+    """Lê os arquivos de imagem e devolve uma lista de (bytes, mime_type)."""
+    saida = []
+    for caminho in caminhos:
+        ext = str(caminho).lower().rsplit(".", 1)[-1]
+        with open(caminho, "rb") as f:
+            saida.append((f.read(), _MIMES.get(ext, "image/png")))
+    return saida
+
+
+def _chamar_modelo_com_imagens(prompt: str, caminhos_imagens: list, max_tokens: int) -> str:
+    """Igual ao _chamar_modelo, mas manda também imagens (prints) pro modelo."""
+    imagens = _ler_imagens(caminhos_imagens)
+    if PROVEDOR == "gemini":
+        return _chamar_gemini_imagens(prompt, imagens)
+    if PROVEDOR == "claude":
+        return _chamar_claude_imagens(prompt, imagens, max_tokens)
+    raise ValueError(
+        f"PROVEDOR desconhecido: '{PROVEDOR}'. Use 'gemini' ou 'claude' no .env."
     )
-    return "".join(b.text for b in resposta.content if b.type == "text").strip()
+
+
+def _chamar_gemini_imagens(prompt: str, imagens: list) -> str:
+    global _client_gemini
+    if _client_gemini is None:
+        from google import genai
+        _client_gemini = genai.Client()
+    from google.genai import types
+
+    partes = [prompt]
+    for dados, mime in imagens:
+        partes.append(types.Part.from_bytes(data=dados, mime_type=mime))
+
+    def _chamada():
+        resposta = _client_gemini.models.generate_content(
+            model=MODELO_GEMINI, contents=partes
+        )
+        return (resposta.text or "").strip()
+
+    return _com_retry(_chamada)
+
+
+def _chamar_claude_imagens(prompt: str, imagens: list, max_tokens: int) -> str:
+    global _client_claude
+    if _client_claude is None:
+        from anthropic import Anthropic
+        _client_claude = Anthropic()
+
+    conteudo = []
+    for dados, mime in imagens:
+        b64 = base64.standard_b64encode(dados).decode()
+        conteudo.append({
+            "type": "image",
+            "source": {"type": "base64", "media_type": mime, "data": b64},
+        })
+    conteudo.append({"type": "text", "text": prompt})
+
+    def _chamada():
+        resposta = _client_claude.messages.create(
+            model=MODELO_CLAUDE,
+            max_tokens=max_tokens,
+            messages=[{"role": "user", "content": conteudo}],
+        )
+        return "".join(b.text for b in resposta.content if b.type == "text").strip()
+
+    return _com_retry(_chamada)
 
 
 # ------------------------------------------------------------------
