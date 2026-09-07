@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fundo: {{ marca.cor_fundo }};
+    --fundo2: {{ marca.cor_fundo_2 }};
+    --texto: {{ marca.cor_texto }};
+    --suave: {{ marca.cor_texto_suave }};
+    --destaque: {{ marca.cor_destaque }};
+    --destaque2: {{ marca.cor_destaque_2 }};
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; }
+  body {
+    font-family: {{ marca.fonte }};
+    background:
+      radial-gradient(90% 70% at 12% 8%, var(--fundo2) 0%, var(--fundo) 55%);
+    color: var(--texto);
+    display: flex;
+    flex-direction: column;
+    padding: 96px 84px;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Marca no topo */
+  .marca-top {
+    position: absolute; top: 76px; left: 84px;
+    display: flex; align-items: center; gap: 14px;
+    font-weight: 800; font-size: 30px; color: var(--suave);
+  }
+  .marca-top .ponto {
+    width: 20px; height: 20px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--destaque), var(--destaque2));
+  }
+
+  /* Rodapé: @ + paginação */
+  .rodape {
+    position: absolute; bottom: 76px; left: 84px; right: 84px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--suave); font-size: 27px; font-weight: 500;
+  }
+  .paginacao { display: flex; gap: 11px; }
+  .dot { width: 13px; height: 13px; border-radius: 50%; background: rgba(255,255,255,.16); }
+  .dot.on { background: var(--destaque); width: 34px; border-radius: 99px; }
+
+  .faixa {
+    height: 7px; width: 132px; border-radius: 99px;
+    background: linear-gradient(90deg, var(--destaque), var(--destaque2));
+    margin-bottom: 44px;
+  }
+
+  .miolo { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+  /* CAPA — o único momento "ousado": o destaque gigante em gradiente */
+  .capa .destaque {
+    font-size: 260px; font-weight: 900; line-height: .82; letter-spacing: -6px;
+    background: linear-gradient(125deg, var(--destaque), var(--destaque2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .capa h1 { font-size: 78px; font-weight: 800; line-height: 1.06; margin-top: 8px; max-width: 15ch; }
+
+  /* ITEM (erro / dica / passo...) */
+  .badge {
+    align-self: flex-start; font-size: 30px; font-weight: 700; color: var(--fundo);
+    background: var(--destaque); padding: 13px 28px; border-radius: 12px; margin-bottom: 46px;
+  }
+  .item h2 { font-size: 68px; font-weight: 800; line-height: 1.08; margin-bottom: 36px; max-width: 16ch; }
+  .item p { font-size: 39px; line-height: 1.5; color: var(--suave); font-weight: 400; max-width: 24ch; }
+
+  /* FECHAMENTO (solução / conclusão) */
+  .fechamento h2 { font-size: 72px; font-weight: 800; line-height: 1.1; margin-bottom: 36px; color: var(--destaque); max-width: 16ch; }
+  .fechamento p { font-size: 42px; line-height: 1.5; color: var(--texto); font-weight: 400; max-width: 22ch; }
+
+  /* CTA */
+  .cta h2 { font-size: 74px; font-weight: 800; line-height: 1.1; margin-bottom: 56px; max-width: 15ch; }
+  .acoes { display: flex; flex-direction: column; gap: 30px; }
+  .acao { font-size: 43px; font-weight: 500; display: flex; align-items: center; gap: 26px; }
+  .acao .ic { font-size: 50px; line-height: 1; }
+</style>
+</head>
+<body>
+  <div class="marca-top"><span class="ponto"></span>{{ marca.nome }}</div>
+
+  <div class="miolo">
+  {% if slide.tipo == 'capa' %}
+    <div class="capa">
+      <div class="faixa"></div>
+      {% if slide.destaque is defined %}<div class="destaque">{{ slide.destaque }}</div>{% endif %}
+      <h1>{{ slide.titulo }}</h1>
+    </div>
+  {% elif slide.tipo == 'item' %}
+    <div class="item">
+      {% if slide.rotulo is defined %}<div class="badge">{{ slide.rotulo }}</div>{% endif %}
+      <h2>{{ slide.titulo }}</h2>
+      <p>{{ slide.texto }}</p>
+    </div>
+  {% elif slide.tipo == 'fechamento' %}
+    <div class="fechamento">
+      <div class="faixa"></div>
+      <h2>{{ slide.titulo }}</h2>
+      <p>{{ slide.texto }}</p>
+    </div>
+  {% elif slide.tipo == 'cta' %}
+    <div class="cta">
+      <h2>{{ slide.titulo }}</h2>
+      <div class="acoes">
+        {% for a in slide.acoes %}
+        <div class="acao"><span class="ic">{{ a.icone }}</span>{{ a.texto }}</div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+  </div>
+
+  <div class="rodape">
+    <span>{{ marca.arroba }}</span>
+    <span class="paginacao">
+      {% for n in range(total) %}<span class="dot {{ 'on' if n + 1 == indice else '' }}"></span>{% endfor %}
+    </span>
+  </div>
+</body>
+</html>

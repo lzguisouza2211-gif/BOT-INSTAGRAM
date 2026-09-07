@@ -1,0 +1,49 @@
+=== ESQUELETO DA REFERÊNCIA ===
+{
+  "formato": "Carrossel",
+  "gancho": "Promessa numérica focada na identificação de erros comuns e dor do público-alvo",
+  "estrutura": [
+    "Título/Capa com número + alerta de erro comum no nicho",
+    "Apresentação individualizada de cada erro",
+    "Explicação sucinta do impacto negativo de cada falha",
+    "Apresentação da solução ou alternativa correta",
+    "Conclusão com convite para interação"
+  ],
+  "tom": "Educacional, direto e de autoridade",
+  "tema": "Vendas, Varejo e Gestão de Negócios",
+  "cta": "Chamada para salvar o conteúdo ou comentar sobre a própria experiência"
+}
+
+
+=== ESQUELETO DA REFERÊNCIA ===
+{
+  "formato": "Carrossel ou Reels (formato de lista)",
+  "gancho": "Alerta baseado em número + dor/erro comum de um público específico",
+  "estrutura": [
+    "Capa/Abertura: Afirmação forte com número delimitado de erros e público-alvo",
+    "Desenvolvimento: Apresentação sequencial de cada erro (Erro 1, Erro 2, Erro 3) com breve explicação do impacto de cada um",
+    "Fechamento: Solução rápida ou reflexão sobre como evitar esses erros",
+    "CTA final"
+  ],
+  "tom": "Direto, consultivo e instrutivo",
+  "tema": "Gestão de negócios / Varejo",
+  "cta": "Focada em engajamento ou salvamento (ex: 'Salve para não esquecer' ou 'Qual desses erros você comete?')"
+}
+
+Gerando seu post original...
+
+=== POST GERADO ===
+{
+  "legenda": "3 erros que todo dono de comércio comete ao escolher um sistema (e como parar de perder dinheiro) 🚨\n\n[SLIDE 1 - CAPA]\n3 erros que você comete ao contratar um sistema pronto pra sua loja.\n\n[SLIDE 2]\n❌ Erro 1: Pagar por 50 funções inutilizáveis (e não ter a única que precisa)\nSistemas de prateleira tentam atender a padaria e a loja de roupas ao mesmo tempo. O resultado? Você paga caro por um monte de botão polutuindo sua tela e continua tendo que usar planilha por fora pra controlar o que realmente importa.\n\n[SLIDE 3]\n❌ Erro 2: Forçar sua equipe a se adaptar ao sistema, e não o contrário\nSeu atendimento era rápido, mas agora o cliente espera min na fila porque o sistema exige 10 cliques pra fechar uma venda simples. Um software ruim trava a operação em vez de agilizar.\n\n[SLIDE 4]\n❌ Erro 3: Ficar na mão de suporte robótico no horário de pico\nSábado à tarde, loja cheia, o caixa trava. Você abre um chamado e recebe uma resposta automática dizendo que vão responder em até 48 horas úteis. Sistema genérico te trata como só mais um número de ticket.\n\n[SLIDE 5 - A SOLUÇÃO]\nO baratinho da prateleira custa caro na rotina. Quando você roda um software sob medida, o sistema se encaixa no seu processo exato, roda sem firula e resolve o problema real do seu balcão.\n\n[SLIDE 6 - CTA]\nQual desses 3 perrengues você já passou aí na sua loja?\n\n💬 Comenta aqui embaixo ou 💾 salve esse post pra não errar na próxima escolha!",
+  "brief_de_imagem": "Carrossel visualmente limpo e direto no padrão NorthCode (fundo escuro, detalhes em alto contraste verde/azul). Slide 1: Título grande e em destaque, focado no alerta dos '3 ERROS'. Slides 2 a 4: Layout estilo 'Card' individual para cada erro, usando ícones simples de alerta/erro e tipografia bem legível para o texto curto. Slide 5: Layout comparativo ou frase de destaque centralizada com visual profissional. Slide 6: Tela final limpa com destaque para os ícones de 'Salvar' e 'Comentar'.",
+  "hashtags": [
+    "#comerciolocal",
+    "#softwaresobmedida",
+    "#sistemadegestao",
+    "#gestaodevarejo",
+    "#tecnologia",
+    "#desenvolvimento",
+    "#papeiserepeticoes",
+    "#northcode"
+  ]
+}

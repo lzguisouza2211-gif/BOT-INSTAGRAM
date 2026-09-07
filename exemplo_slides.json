@@ -1,0 +1,40 @@
+{
+  "slides": [
+    {
+      "tipo": "capa",
+      "numero": 3,
+      "titulo": "erros que você comete ao contratar um sistema pronto pra sua loja"
+    },
+    {
+      "tipo": "erro",
+      "numero": 1,
+      "titulo": "Pagar por 50 funções que você nunca usa",
+      "texto": "Sistema de prateleira tenta servir padaria e loja de roupa ao mesmo tempo. Você paga caro por botão que não usa e ainda controla o que importa numa planilha por fora."
+    },
+    {
+      "tipo": "erro",
+      "numero": 2,
+      "titulo": "Forçar sua equipe a se adaptar ao sistema",
+      "texto": "Seu atendimento era rápido, mas agora o cliente espera na fila porque fechar uma venda virou 10 cliques. Software ruim trava a operação em vez de agilizar."
+    },
+    {
+      "tipo": "erro",
+      "numero": 3,
+      "titulo": "Ficar na mão do suporte robótico no pico",
+      "texto": "Sábado à tarde, loja cheia, o caixa trava. Você abre um chamado e recebe um 'respondemos em até 48h'. Sistema genérico te trata como número de ticket."
+    },
+    {
+      "tipo": "solucao",
+      "titulo": "O baratinho da prateleira custa caro na rotina",
+      "texto": "Com um software sob medida, o sistema se encaixa no seu processo exato, roda sem firula e resolve o problema real do seu balcão."
+    },
+    {
+      "tipo": "cta",
+      "titulo": "Qual desses perrengues você já passou aí na sua loja?",
+      "acoes": [
+        { "icone": "💬", "texto": "Comenta aqui embaixo" },
+        { "icone": "💾", "texto": "Salva pra não errar na próxima" }
+      ]
+    }
+  ]
+}
